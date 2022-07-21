@@ -6,7 +6,6 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/lib/pq v1.10.6
-	gitlab.com/mkpmobile2022/mkp-mobile-utils v0.0.0-20220720052003-b45fedb12bea
 	go.mongodb.org/mongo-driver v1.9.1
 )
 

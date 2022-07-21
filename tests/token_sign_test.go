@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	mkpmobileutils "gitlab.com/mkpmobile2022/mkp-mobile-utils/src/utils"
+	mkpmobileutils "github.com/dandeat/mkpmobile-utils/src/utils"
 )
 
 func TestCreateTokenSignature(t *testing.T) {

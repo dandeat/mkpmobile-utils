@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"testing"
 
-	"gitlab.com/mkpmobile2022/mkp-mobile-utils/src/runningNumberRepository"
-	testconfig "gitlab.com/mkpmobile2022/mkp-mobile-utils/tests/testConfig"
+	"github.com/dandeat/mkpmobile-utils/src/runningNumberRepository"
+	testconfig "github.com/dandeat/mkpmobile-utils/tests/testConfig"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

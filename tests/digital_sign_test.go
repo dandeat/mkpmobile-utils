@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	mkpmobileutils "gitlab.com/mkpmobile2022/mkp-mobile-utils/src/utils"
+	mkpmobileutils "github.com/dandeat/mkpmobile-utils/src/utils"
 )
 
 type DummyBodyRequest struct {
