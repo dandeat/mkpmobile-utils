@@ -44,7 +44,9 @@ func WorkerRequestPOST(tipeRequest, urlApi string, requestBody interface{}, requ
 	if err != nil {
 		return result, err
 	}
+	resp.Header.Set("Connection", "close")
 	defer resp.Body.Close()
+	resp.Close = true
 
 	result, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -98,7 +100,9 @@ func WorkerRequestPOSTJWT(tipeRequest, urlApi, accessToken string, requestBody i
 	if err != nil {
 		return result, err
 	}
+	resp.Header.Set("Connection", "close")
 	defer resp.Body.Close()
+	resp.Close = true
 
 	result, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -141,7 +145,9 @@ func WorkerRequestPOSTBasicAuth(tipeRequest, urlApi string, requestBody interfac
 	if err != nil {
 		return result, err
 	}
+	resp.Header.Set("Connection", "close")
 	defer resp.Body.Close()
+	resp.Close = true
 
 	result, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
