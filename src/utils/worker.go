@@ -8,8 +8,11 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/streadway/amqp"
 )
 
+// WORKER REST API
 func WorkerRequestPOST(tipeRequest, urlApi string, requestBody interface{}, requestHeader ReqHeader) (result []byte, err error) {
 
 	bodyRequest, _ := json.Marshal(requestBody)
@@ -225,3 +228,57 @@ func GenerateRequestHeader(request *http.Request, requestHeader RequestHeaderBIF
 	return request
 
 }
+
+// END WORKER REST API
+
+// WORKER RABBITMQ
+func WorkerRbtPublish(chn *amqp.Channel, exchange, queue, contentType string, mandatory, immediate bool, body interface{}) error {
+	byteBody, err := json.Marshal(body)
+	if err != nil {
+		return err
+	}
+
+	err = chn.Publish(
+		exchange,
+		queue,
+		mandatory,
+		immediate,
+		amqp.Publishing{
+			ContentType: contentType,
+			Body:        byteBody,
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// type WorkerRbtSubOpt struct {
+// 	queueName string
+// 	consumer  string
+// 	autoAck   bool
+// 	exclusive bool
+// 	noLocal   bool
+// 	noWait    bool
+// 	arg       amqp.Table
+// }
+
+// func WorkerRbtSub(chn *amqp.Channel, opt WorkerRbtSubOpt) () {
+
+// 	messages, err := chn.Consume(
+// 		opt.queueName, // queue name
+// 		opt.consumer,  // consumer
+// 		opt.autoAck,   // auto-ack
+// 		opt.exclusive, // exclusive
+// 		opt.noLocal,   // no local
+// 		opt.noWait,    // no wait
+// 		opt.arg,       // arguments
+// 	)
+// 	if err != nil {
+
+// 	}
+// }
+
+// END WORKER RABBITMQ
