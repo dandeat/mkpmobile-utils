@@ -28,20 +28,8 @@ func NewRunningNumberRepository(repoDB Repository) runningNumberRepository {
 }
 
 type RunningNumberRepository interface {
-	GenerateRunningNumber(p string, v string) (string, error)
 	RunningNumberValue(prefix string, leadingZero ...int) (string, error)
 	RunningNumberValueWithDatatype(datatype string, prefix string, leadingZero ...int) (string, error)
-}
-
-func (ctx runningNumberRepository) GenerateRunningNumber(p string, v string) (string, error) {
-	var runningNumber string
-
-	err := ctx.RepoDB.DB.QueryRow("SELECT fs_gen_autonum($1, $2)", p, v).Scan(&runningNumber)
-	if err != nil {
-		return "", err
-	}
-
-	return runningNumber, nil
 }
 
 func (ctx runningNumberRepository) RunningNumberValue(prefix string, leadingZero ...int) (string, error) {

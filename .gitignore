@@ -1,0 +1,7 @@
+.env
+go.mod
+go.sum
+gomodinit.txt
+/logs
+/example
+.DS_Store

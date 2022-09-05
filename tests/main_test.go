@@ -33,7 +33,7 @@ func TestMain(t *testing.M) {
 
 	fmt.Println("mongoDB:", mongoDB)
 
-	repoRunningNum := runningNumberRepository.NewRepository(db, ctx, mongoDB)
+	repoRunningNum := runningNumberRepository.NewRepository(ctx, mongoDB)
 
 	runningNumberRepo = runningNumberRepository.NewRunningNumberRepository(repoRunningNum)
 	// repoRunningNum := runningNumberRepository.NewRunningNumberRepository(db, ctx, nil)
