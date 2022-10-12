@@ -75,3 +75,11 @@ type ResponseV1 struct {
 	ResponseDatetime time.Time   `json:"responseDateTime"`
 	Result           interface{} `json:"result"`
 }
+
+type ResponseV1Enc struct {
+	ResponseCode     string      `json:"responseCode"`
+	ResponseMessage  string      `json:"responseMessage"`
+	ResponseDatetime time.Time   `json:"responseDateTime"`
+	Result           interface{} `json:"result"`
+	MetaResult       string      `json:"metaResult"`
+}

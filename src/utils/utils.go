@@ -1,6 +1,7 @@
 package mkpmobileutils
 
 import (
+	"bytes"
 	"crypto"
 	"crypto/aes"
 	"crypto/cipher"
@@ -112,6 +113,30 @@ func ResponseJSONV1(code string, msg string, result interface{}) ResponseV1 {
 	return response
 }
 
+//Response JSON v1 Encrypted
+func ResponseJSONV1Enc(code string, msg string, result interface{}, encIv, scretKey string) (ResponseV1Enc, error) {
+	tm := time.Now()
+	response := ResponseV1Enc{
+		Result:           result,
+		ResponseCode:     code,
+		ResponseMessage:  msg,
+		ResponseDatetime: tm,
+	}
+
+	resStr, err := json.Marshal(response)
+	if err != nil {
+		return response, err
+	}
+
+	encResult, err := AES256EncryptV2(string(resStr), encIv, scretKey)
+	if err != nil {
+		return response, err
+	}
+	response.MetaResult = encResult
+
+	return response, nil
+}
+
 // Generate Random Number
 func RandNumber(max int64) (n int64, err error) {
 	nBig, err := rand.Int(rand.Reader, big.NewInt(max))
@@ -159,7 +184,7 @@ func ValBlankOrNull(request interface{}, keyName ...string) error {
 	for idx := range keyName {
 		name := keyName[idx]
 		if len(strings.TrimSpace(paramsValue[name].(string))) == 0 {
-			return errors.New(fmt.Sprintf("%s must be filled", name))
+			return fmt.Errorf("%s must be filled", name)
 		}
 	}
 
@@ -237,12 +262,43 @@ func decodeHex(input []byte) ([]byte, error) {
 }
 
 func Base64ToHex(s string) string {
-	p, err := base64.StdEncoding.DecodeString(s)
-	if err != nil {
-		// handle error
-	}
+	p, _ := base64.StdEncoding.DecodeString(s)
 	h := hex.EncodeToString(p)
 	return h
+}
+
+func AES256EncryptV2(message, encIv, secretKey string) (string, error) {
+
+	block, err := aes.NewCipher([]byte(secretKey))
+	if err != nil {
+		return "", err
+	}
+
+	iv := []byte(encIv)
+
+	enc := cipher.NewCBCEncrypter(block, iv)
+	content := PKCS5Padding([]byte(message), block.BlockSize())
+	crypted := make([]byte, len(content))
+	enc.CryptBlocks(crypted, content)
+
+	return base64.StdEncoding.EncodeToString(crypted), nil
+}
+
+func AES256DecryptV2(message, encIv, secretKey string) (string, error) {
+
+	block, err := aes.NewCipher([]byte(secretKey))
+	if err != nil {
+		return "", err
+	}
+
+	iv := []byte(encIv)
+
+	messageData, _ := base64.StdEncoding.DecodeString(message)
+	dec := cipher.NewCBCDecrypter(block, iv)
+	decrypted := make([]byte, len(messageData))
+	dec.CryptBlocks(decrypted, messageData)
+
+	return string(PKCS5Unpadding(decrypted)), nil
 }
 
 // Decrypt from base64 to decrypted string
@@ -275,6 +331,17 @@ func Aes256Decrypt(cryptoText string, saltKey ...interface{}) (interface{}, erro
 	unMarshall := json.Unmarshal(ciphertext, &result)
 	fmt.Println(unMarshall)
 	return result, nil
+}
+
+func PKCS5Padding(ciphertext []byte, blockSize int) []byte {
+	padding := blockSize - len(ciphertext)%blockSize
+	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
+	return append(ciphertext, padtext...)
+}
+
+func PKCS5Unpadding(encrypt []byte) []byte {
+	padding := encrypt[len(encrypt)-1]
+	return encrypt[:len(encrypt)-int(padding)]
 }
 
 // -------------------------------- Digital Signature --------------------------------
